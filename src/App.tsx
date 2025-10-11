@@ -1,15 +1,19 @@
-import Dashboard from "./components/Dashboard";
+import { useEffect } from "react";
 
+import Dashboard from "./components/Dashboard";
 import { useDashboardStore } from "./store/useDashboardStore";
 
 export default function App() {
   const addWidget = useDashboardStore((s) => s.addWidget);
-  console.debug("[Supabase] URL present:", !!import.meta.env.VITE_SUPABASE_URL);
+  const { initWidgets } = useDashboardStore();
+
+  useEffect(() => {
+    initWidgets();
+  }, [initWidgets]);
 
   const handleAdd = () => {
     const id = Date.now().toString();
     addWidget({
-      id,
       type: "text",
       layout: { i: id, x: 0, y: Infinity, w: 3, h: 2 },
       props: { content: "새 메모" },
@@ -34,7 +38,7 @@ export default function App() {
         + 새 텍스트 위젯
       </button>
 
-      {/* <Dashboard /> */}
+      <Dashboard />
     </div>
   );
 }

@@ -1,9 +1,10 @@
 import Dashboard from "./components/Dashboard";
 
-import { useDashboardStore } from "./store/dashboardStore";
+import { useDashboardStore } from "./store/useDashboardStore";
 
 export default function App() {
   const addWidget = useDashboardStore((s) => s.addWidget);
+  console.debug("[Supabase] URL present:", !!import.meta.env.VITE_SUPABASE_URL);
 
   const handleAdd = () => {
     const id = Date.now().toString();
@@ -33,7 +34,7 @@ export default function App() {
         + 새 텍스트 위젯
       </button>
 
-      <Dashboard />
+      {/* <Dashboard /> */}
     </div>
   );
 }

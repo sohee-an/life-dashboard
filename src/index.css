@@ -32,3 +32,9 @@ body {
   /* min-width: 100vw;
   min-height: 100vh; */
 }
+
+.react-grid-item.react-grid-placeholder {
+  background: rgba(255, 0, 0, 0.1);
+  border: 2px dashed rgba(255, 0, 0, 0.3);
+  transition: all 0.2s ease-in-out;
+}

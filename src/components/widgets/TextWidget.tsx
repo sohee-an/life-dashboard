@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDashboardStore } from "../../store/useDashboardStore";
 import { MoreVertical, X } from "lucide-react";
-
+import clsx from "clsx";
 export default function TextWidget({
   id,
   content,
@@ -30,9 +30,11 @@ export default function TextWidget({
 
   return (
     <div
-      className={`relative flex flex-col w-full h-full rounded-lg bg-gray-50 shadow-sm transition-transform
-        ${isEditMode ? "animate-wiggle" : ""}
-      `}
+      className={clsx(
+        "p-2 relative flex flex-col w-full h-full rounded-lg shadow-sm transition-all duration-200",
+        isEditMode && "animate-wiggle",
+        hover ? "bg-red-300 cursor-grab" : "bg-gray-50"
+      )}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => {
         setHover(false);
@@ -43,10 +45,11 @@ export default function TextWidget({
         value={localContent}
         onChange={handleChange}
         onBlur={handleBlur}
-        className=" flex-1 w-full h-full resize-none border-none outline-none p-3 text-base text-black bg-gray-50"
+        className={`no-drag flex-1 w-full h-full resize-none border-none outline-none p-3 text-base rounded-lg
+    text-black bg-gray-50 focus:ring-2 focus:ring-blue-400 focus:bg-white transition-all duration-200
+  `}
         placeholder="내용을 입력하세요..."
       />
-
       {isEditMode ? (
         <button
           onClick={() => deleteWidget(id)}

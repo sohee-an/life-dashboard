@@ -1,48 +1,49 @@
-// export type WidgetType = "text" | "budget" | "chart";
+import type { Layout } from "react-grid-layout";
 
-// export interface WidgetPropsMap {
-//   text: { content: string };
-//   budget: { amount: number; category: string };
-//   chart: { data: number[]; color: string };
-// }
+export type WidgetType = "text" | "budget" | "chart";
 
-// // Widget 제네릭화
-// export interface Widget<T extends WidgetType = WidgetType> {
-//   id: string;
-//   type: T;
-//   layout: {
-//     i: string;
-//     x: number;
-//     y: number;
-//     w: number;
-//     h: number;
-//   };
-//   props: WidgetPropsMap[T];
-// }
-export type Layout = {
-  i: string;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
+export interface WidgetPropsMap {
+  text: { content: string };
+  budget: { amount: number; category: string };
+  chart: { data: number[]; color: string };
+}
+
+export interface WidgetBase {
+  id: string;
+  type: WidgetType;
+  layout: Layout;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export type Widget<T extends WidgetType = WidgetType> = WidgetBase & {
+  props: WidgetPropsMap[T];
 };
 
-export type Widget =
-  | {
-      id: string;
-      type: "text";
-      layout: Layout;
-      props: { content: string };
-    }
-  | {
-      id: string;
-      type: "budget";
-      layout: Layout;
-      props: { amount: number; category: string };
-    }
-  | {
-      id: string;
-      type: "chart";
-      layout: Layout;
-      props: { data: number[]; color: string };
-    };
+// export type Layout = {
+//   i: string;
+//   x: number;
+//   y: number;
+//   w: number;
+//   h: number;
+// };
+
+// export type Widget =
+//   | {
+//       id: string;
+//       type: "text";
+//       layout: Layout;
+//       props: { content: string };
+//     }
+//   | {
+//       id: string;
+//       type: "budget";
+//       layout: Layout;
+//       props: { amount: number; category: string };
+//     }
+//   | {
+//       id: string;
+//       type: "chart";
+//       layout: Layout;
+//       props: { data: number[]; color: string };
+//     };

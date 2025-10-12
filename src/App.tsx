@@ -1,16 +1,16 @@
 import { useEffect } from "react";
-
-import Dashboard from "./components/Dashboard";
 import { useDashboardStore } from "./store/useDashboardStore";
+import Dashboard from "./components/Dashboard";
 
 export default function App() {
   const addWidget = useDashboardStore((s) => s.addWidget);
-  const { initWidgets } = useDashboardStore();
+  const isEditMode = useDashboardStore((s) => s.isEditMode);
+  const setEditMode = useDashboardStore((s) => s.setEditMode);
+  const initWidgets = useDashboardStore((s) => s.initWidgets);
 
   useEffect(() => {
     initWidgets();
   }, [initWidgets]);
-
   const handleAdd = () => {
     const id = Date.now().toString();
     addWidget({
@@ -21,22 +21,28 @@ export default function App() {
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>📊 Life Dashboard</h1>
-      <button
-        onClick={handleAdd}
-        style={{
-          marginBottom: 16,
-          background: "#2563eb",
-          color: "white",
-          border: "none",
-          padding: "8px 14px",
-          borderRadius: 6,
-          cursor: "pointer",
-        }}
-      >
-        + 새 텍스트 위젯
-      </button>
+    <div className="p-5">
+      <h1 className="text-3xl mb-2">📊 Life Dashboard</h1>
+
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={handleAdd}
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+        >
+          + 새 텍스트 위젯
+        </button>
+
+        <button
+          onClick={() => setEditMode(!isEditMode)}
+          className={`px-4 py-2 rounded-md border transition-colors ${
+            isEditMode
+              ? "bg-red-600 text-white border-red-600"
+              : "bg-gray-600 text-white border-gray-600 hover:bg-gray-700"
+          }`}
+        >
+          {isEditMode ? "편집 종료" : "편집 모드"}
+        </button>
+      </div>
 
       <Dashboard />
     </div>

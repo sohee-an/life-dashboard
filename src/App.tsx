@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDashboardStore } from "./store/useDashboardStore";
 import Dashboard from "./components/Dashboard";
 import Layout from "./components/layout";
+import { Settings } from "lucide-react";
 
 export default function App() {
   const addWidget = useDashboardStore((s) => s.addWidget);
@@ -43,13 +44,14 @@ export default function App() {
 
           <button
             onClick={() => setEditMode(!isEditMode)}
-            className={`px-4 py-2 rounded-md border transition-colors ${
+            className={`px-4 py-2 rounded-md border transition-colors flex gap-2 items-center ${
               isEditMode
                 ? "bg-red-600 text-white border-red-600"
                 : "bg-gray-600 text-white border-gray-600 hover:bg-gray-700"
             }`}
           >
-            {isEditMode ? "편집 종료" : "편집 모드"}
+            <Settings className="w-5 h-5" />
+            <span> {isEditMode ? "편집 종료" : "편집 모드"}</span>
           </button>
           {isEditMode && (
             <button

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDashboardStore } from "../../store/useDashboardStore";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, X } from "lucide-react";
 
 export default function TextWidget({
   id,
@@ -11,15 +11,14 @@ export default function TextWidget({
 }) {
   const updateWidget = useDashboardStore((s) => s.updateWidget);
   const deleteWidget = useDashboardStore((s) => s.deleteWidget);
+  const isEditMode = useDashboardStore((s) => s.isEditMode);
+
   const [hover, setHover] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
   const [localContent, setLocalContent] = useState(content);
 
-  // 외부 content 변경 → 로컬 상태 동기화 (초기화 or 다른 기기에서 수정된 경우)
-  useEffect(() => {
-    setLocalContent(content);
-  }, [content]);
+  // 외부 변경 동기화
+  useEffect(() => setLocalContent(content), [content]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setLocalContent(e.target.value);
@@ -31,7 +30,9 @@ export default function TextWidget({
 
   return (
     <div
-      className="relative flex flex-col w-full h-full rounded-lg bg-gray-50 shadow-sm"
+      className={`relative flex flex-col w-full h-full rounded-lg bg-gray-50 shadow-sm transition-transform
+        ${isEditMode ? "animate-wiggle" : ""}
+      `}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => {
         setHover(false);
@@ -46,23 +47,33 @@ export default function TextWidget({
         placeholder="내용을 입력하세요..."
       />
 
-      {hover && (
+      {isEditMode ? (
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setMenuOpen((v) => !v);
-          }}
-          className="bg-white no-drag absolute top-2 right-2 p-1 rounded-md hover:bg-gray-100 transition-colors"
+          onClick={() => deleteWidget(id)}
+          className="no-drag absolute top-2 right-2 bg-white border border-gray-300 rounded-full p-1 hover:bg-red-100 transition"
         >
-          <MoreVertical className="w-4 h-4 text-gray-400" />
+          <X className="text-red-500 w-4 h-4" />
         </button>
+      ) : (
+        hover && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setMenuOpen((v) => !v);
+            }}
+            className="no-drag absolute top-2 right-2 bg-white border border-gray-300 rounded-md p-1 hover:bg-gray-100 transition"
+          >
+            <MoreVertical className="w-4 h-4 text-gray-400" />
+          </button>
+        )
       )}
 
-      {menuOpen && (
-        <div className="absolute no-drag right-2 top-8 bg-white border border-gray-200 shadow-md rounded-md text-sm z-10">
+      {/* 메뉴 */}
+      {menuOpen && !isEditMode && (
+        <div className="absolute right-2 top-8 bg-white border border-gray-200 shadow-md rounded-md text-sm z-10">
           <button
             onClick={() => deleteWidget(id)}
-            className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-red-500"
+            className="no-drag block px-4 py-2 w-full text-left text-red-500 border-t border-gray-200 hover:bg-gray-100"
           >
             삭제
           </button>

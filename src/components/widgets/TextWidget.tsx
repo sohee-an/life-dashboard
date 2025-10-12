@@ -42,21 +42,24 @@ export default function TextWidget({
         value={localContent}
         onChange={handleChange}
         onBlur={handleBlur}
-        className="flex-1 w-full h-full resize-none border-none outline-none p-3 text-base text-black bg-gray-50"
+        className=" flex-1 w-full h-full resize-none border-none outline-none p-3 text-base text-black bg-gray-50"
         placeholder="내용을 입력하세요..."
       />
 
       {hover && (
         <button
-          onClick={() => setMenuOpen((v) => !v)}
-          className="absolute top-2 right-2 p-1 rounded-md hover:bg-gray-100 transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            setMenuOpen((v) => !v);
+          }}
+          className="bg-white no-drag absolute top-2 right-2 p-1 rounded-md hover:bg-gray-100 transition-colors"
         >
           <MoreVertical className="w-4 h-4 text-gray-400" />
         </button>
       )}
 
       {menuOpen && (
-        <div className="absolute right-2 top-8 bg-white border border-gray-200 shadow-md rounded-md text-sm z-10">
+        <div className="absolute no-drag right-2 top-8 bg-white border border-gray-200 shadow-md rounded-md text-sm z-10">
           <button
             onClick={() => deleteWidget(id)}
             className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-red-500"

@@ -9,7 +9,7 @@ export default function TextWidget({
   id: string;
   content: string;
 }) {
-  const updateWidget = useDashboardStore((s) => s.updateWidget);
+  const updateWidgetProps = useDashboardStore((s) => s.updateWidgetProps);
   const deleteWidget = useDashboardStore((s) => s.deleteWidget);
   const isEditMode = useDashboardStore((s) => s.isEditMode);
 
@@ -25,7 +25,7 @@ export default function TextWidget({
   };
 
   const handleBlur = () => {
-    updateWidget(id, { props: { content: localContent } });
+    updateWidgetProps(id, { content: localContent });
   };
 
   return (

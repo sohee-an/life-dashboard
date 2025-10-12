@@ -1,24 +1,14 @@
-import React from "react";
-import GridLayout, { type Layout } from "react-grid-layout"; // ✅ Layout 타입 import
-
+import GridLayout from "react-grid-layout";
 import WidgetRenderer from "./widgets/WidgetRenderer";
-import type { Widget } from "../types/widget";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-import { useDashboardStore } from "../store/dashboardStore";
+
+import { useWidgetLayoutSync } from "../hooks/useWidgetLayoutSync";
 
 export default function Dashboard() {
-  const { widgets, setWidgets } = useDashboardStore();
+  const { widgetArray, handleLayoutChange } = useWidgetLayoutSync();
 
-  const layout: Layout[] = widgets.map((w) => ({ ...w.layout, i: w.id }));
-
-  const handleLayoutChange = (newLayout: Layout[]) => {
-    const updated: Widget[] = widgets.map((w) => ({
-      ...w,
-      layout: newLayout.find((l) => l.i === w.id) || w.layout,
-    }));
-    setWidgets(updated);
-  };
+  const layout = widgetArray.map((w) => ({ ...w.layout, i: w.id }));
 
   return (
     <GridLayout
@@ -28,8 +18,9 @@ export default function Dashboard() {
       rowHeight={80}
       width={1200}
       onLayoutChange={handleLayoutChange}
+      draggableCancel=".no-drag"
     >
-      {widgets.map((widget) => (
+      {widgetArray.map((widget) => (
         <div
           key={widget.id}
           style={{

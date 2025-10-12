@@ -3,6 +3,7 @@ import { useDashboardStore } from "./store/useDashboardStore";
 import Dashboard from "./components/Dashboard";
 import Layout from "./components/layout";
 import { Settings } from "lucide-react";
+import { MENU_TAB } from "./constants/menuTab";
 
 export default function App() {
   const addWidget = useDashboardStore((s) => s.addWidget);
@@ -23,6 +24,7 @@ export default function App() {
       props: { content: "새 메모" },
     });
   };
+
   const handleAllDelet = () => {
     if (confirm("모든 위젯을 삭제하시겠습니까?")) {
       clearAllWidgets();
@@ -33,12 +35,17 @@ export default function App() {
     <Layout>
       <div className="p-5">
         <div className="flex gap-2 mb-4">
-          <button
-            onClick={handleAdd}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-          >
-            + 새 텍스트 위젯
-          </button>
+          {MENU_TAB.map((menu) => {
+            return (
+              <button
+                id={menu.id}
+                onClick={handleAdd}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+              >
+                + 새 {menu.value}
+              </button>
+            );
+          })}
 
           <button
             onClick={() => setEditMode(!isEditMode)}

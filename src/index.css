@@ -3,14 +3,14 @@
 @keyframes wiggle {
   0%,
   100% {
-    transform: rotate(-1.5deg);
+    transform: rotate(-1deg);
   }
   50% {
-    transform: rotate(1.5deg);
+    transform: rotate(1deg);
   }
 }
 
-/* ✨ Tailwind 유틸리티로 등록 */
+/* Tailwind 유틸리티로 등록 */
 @utility animate-wiggle {
   animation: wiggle 0.25s ease-in-out infinite;
 }
@@ -18,8 +18,8 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  color-scheme: light;
 
-  color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
 }

@@ -1,11 +1,15 @@
 import type { Layout } from "react-grid-layout";
 
-export type WidgetType = "text" | "budget" | "chart";
+export type WidgetType = "text" | "budget" | "chart" | "checkbox";
 
 export interface WidgetPropsMap {
   text: { content: string };
   budget: { amount: number; category: string };
   chart: { data: number[]; color: string };
+  checkbox: {
+    title: string;
+    checkboxes: { id: string; label: string; checked: boolean }[];
+  };
 }
 
 export interface WidgetBase {

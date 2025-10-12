@@ -16,13 +16,37 @@ export default function App() {
     initWidgets();
   }, [initWidgets]);
 
-  const handleAdd = () => {
+  const handleAdd = (e: any) => {
     const id = Date.now().toString();
-    addWidget({
-      type: "text",
-      layout: { i: id, x: 0, y: Infinity, w: 3, h: 2 },
-      props: { content: "새 메모" },
-    });
+    const type = e.target.name;
+
+    if (type == "text") {
+      addWidget({
+        type: type,
+        layout: { i: id, x: 0, y: Infinity, w: 3, h: 2 },
+        props: { content: "새 메모" },
+      });
+    } else if (type == "checkbox") {
+      addWidget({
+        type: "checkbox",
+        layout: { i: id, x: 0, y: Infinity, w: 3, h: 2 },
+        props: {
+          title: "할 일",
+          checkboxes: [
+            {
+              id: crypto.randomUUID(),
+              label: "새로운 할 일",
+              checked: false,
+            },
+            {
+              id: crypto.randomUUID(),
+              label: "새로운 할 일2",
+              checked: true,
+            },
+          ],
+        },
+      });
+    }
   };
 
   const handleAllDelet = () => {
@@ -39,6 +63,7 @@ export default function App() {
             return (
               <button
                 id={menu.id}
+                name={menu.type}
                 onClick={handleAdd}
                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
               >

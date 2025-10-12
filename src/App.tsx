@@ -32,8 +32,6 @@ export default function App() {
   return (
     <Layout>
       <div className="p-5">
-        {/* <h1 className="text-3xl mb-2 text-customRed">📊 Life Dashboard</h1> */}
-
         <div className="flex gap-2 mb-4">
           <button
             onClick={handleAdd}

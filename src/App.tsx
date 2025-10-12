@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useDashboardStore } from "./store/useDashboardStore";
 import Dashboard from "./components/Dashboard";
+import Layout from "./components/layout";
 
 export default function App() {
   const addWidget = useDashboardStore((s) => s.addWidget);
@@ -28,38 +29,40 @@ export default function App() {
   };
 
   return (
-    <div className="p-5">
-      <h1 className="text-3xl mb-2 text-customRed">📊 Life Dashboard</h1>
+    <Layout>
+      <div className="p-5">
+        {/* <h1 className="text-3xl mb-2 text-customRed">📊 Life Dashboard</h1> */}
 
-      <div className="flex gap-2 mb-4">
-        <button
-          onClick={handleAdd}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-        >
-          + 새 텍스트 위젯
-        </button>
-
-        <button
-          onClick={() => setEditMode(!isEditMode)}
-          className={`px-4 py-2 rounded-md border transition-colors ${
-            isEditMode
-              ? "bg-red-600 text-white border-red-600"
-              : "bg-gray-600 text-white border-gray-600 hover:bg-gray-700"
-          }`}
-        >
-          {isEditMode ? "편집 종료" : "편집 모드"}
-        </button>
-        {isEditMode && (
+        <div className="flex gap-2 mb-4">
           <button
-            onClick={handleAllDelet}
-            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            onClick={handleAdd}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
           >
-            전체 삭제
+            + 새 텍스트 위젯
           </button>
-        )}
-      </div>
 
-      <Dashboard />
-    </div>
+          <button
+            onClick={() => setEditMode(!isEditMode)}
+            className={`px-4 py-2 rounded-md border transition-colors ${
+              isEditMode
+                ? "bg-red-600 text-white border-red-600"
+                : "bg-gray-600 text-white border-gray-600 hover:bg-gray-700"
+            }`}
+          >
+            {isEditMode ? "편집 종료" : "편집 모드"}
+          </button>
+          {isEditMode && (
+            <button
+              onClick={handleAllDelet}
+              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            >
+              전체 삭제
+            </button>
+          )}
+        </div>
+
+        <Dashboard />
+      </div>
+    </Layout>
   );
 }

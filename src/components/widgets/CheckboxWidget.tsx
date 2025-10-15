@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { useDashboardStore } from "../../store/useDashboardStore";
 import { MoreVertical, X } from "lucide-react";
 import clsx from "clsx";
@@ -20,21 +20,36 @@ export default function CheckboxWidget({
 
   const [hover, setHover] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [localContent, setLocalContent] = useState({});
+  const [localContent, setLocalContent] = useState({ title, checkboxes });
 
   //   // 외부 변경 동기화
-  //   useEffect(() => setLocalContent(content), [content]);
+  useEffect(() => setLocalContent({ title, checkboxes }), [title, checkboxes]);
 
-  //   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-  //     setLocalContent(e.target.value);
-  //   };
+  const handleBlur = () => {
+    updateWidgetProps(id, localContent);
+  };
 
-  //   const handleBlur = () => {
-  //     updateWidgetProps(id, { content: localContent });
-  //   };
+  const handleCheckbox = (e: ChangeEvent<HTMLInputElement>) => {
+    const targetId = e.target.name;
+    const checked = e.target.checked;
 
-  const handleCheckbox = () => {
-     updateWidgetProps(id, { content: localContent });
+    // 체크박스 배열 업데이트
+    const updatedCheckboxes = localContent.checkboxes.map((cb) =>
+      cb.id === targetId ? { ...cb, checked } : cb
+    );
+
+    // 로컬 상태 갱신
+    const updated = { ...localContent, checkboxes: updatedCheckboxes };
+    setLocalContent((prev) => ({ ...prev, updated }));
+
+    updateWidgetProps(id, updated);
+  };
+
+  const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
+    setLocalContent((prev) => ({
+      ...prev,
+      title: e.target.value,
+    }));
   };
 
   return (
@@ -50,20 +65,32 @@ export default function CheckboxWidget({
         setMenuOpen(false);
       }}
     >
-      <input value={title} />
+      <input
+        onBlur={handleBlur}
+        value={localContent.title}
+        onChange={handleChangeTitle}
+      />
       {checkboxes.map((check) => {
         return (
           <div className="flex gap-2 no-drag items-center " id={check.id}>
             <input
+              id={check.id}
               className="w-4 h-4  cursor-pointer"
               checked={check.checked}
               type="checkbox"
+              name={check.id}
               onChange={handleCheckbox}
             />
             <input value={check.label} />
           </div>
         );
       })}
+      <div className=" no-drag flex items-center justify-center pt-2">
+        <button className="border-gray-400 border w-6 h-6 flex items-center justify-center ">
+          +
+        </button>
+      </div>
+
       {isEditMode ? (
         <button
           onClick={() => deleteWidget(id)}

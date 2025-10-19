@@ -152,7 +152,7 @@ export default function CheckboxWidget({
       <div className="no-drag flex items-center justify-center pt-2">
         <button
           onClick={addCheckbox}
-          className="no-drag border-gray-400 border w-6 h-6 flex items-center justify-center rounded-md hover:bg-gray-100"
+          className="no-drag text-gray-400 border-gray-400 border w-6 h-6 flex items-center justify-center rounded-md hover:bg-gray-100"
         >
           +
         </button>

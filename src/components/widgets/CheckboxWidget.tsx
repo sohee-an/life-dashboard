@@ -99,7 +99,7 @@ export default function CheckboxWidget({
   return (
     <div
       className={clsx(
-        "text-black p-2 relative flex flex-col w-full h-full rounded-lg shadow-sm transition-all duration-200",
+        "text-black p-4 relative flex flex-col w-full h-full rounded-lg shadow-sm transition-all duration-200",
         isEditMode && "animate-wiggle",
         hover ? "bg-red-300 cursor-grab" : "bg-gray-50"
       )}
@@ -109,46 +109,48 @@ export default function CheckboxWidget({
         setMenuOpen(false);
       }}
     >
-      {/* 🔹 위젯 타이틀 */}
       <input
         onBlur={handleBlurTitle}
         value={localContent.title}
         onChange={handleChangeTitle}
         className="font-semibold mb-1"
       />
-
-      {/* 🔹 체크박스 목록 */}
-      {localContent.checkboxes.map((check) => (
-        <div
-          key={check.id}
-          className="flex gap-2 no-drag items-center group"
-          id={check.id}
-        >
-          <input
+      <div
+        className={clsx(
+          "flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent scrollbar-hide group-hover:scrollbar-default"
+        )}
+      >
+        {localContent.checkboxes.map((check) => (
+          <div
+            key={check.id}
+            className="flex gap-2 no-drag items-center group"
             id={check.id}
-            className="w-4 h-4 cursor-pointer"
-            checked={check.checked}
-            type="checkbox"
-            name={check.id}
-            onChange={handleCheckbox}
-          />
-          <input
-            className="border-b border-transparent focus:border-gray-400 outline-none flex-1"
-            value={check.label}
-            onChange={(e) => handleLabelChange(e, check.id)}
-            onBlur={() => handleBlurLabel(check.id)}
-          />
-
-          <button
-            onClick={() => deleteCheckbox(check.id)}
-            className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-black transition text-sm"
           >
-            ✕
-          </button>
-        </div>
-      ))}
+            <input
+              id={check.id}
+              className="w-4 h-4 cursor-pointer"
+              checked={check.checked}
+              type="checkbox"
+              name={check.id}
+              onChange={handleCheckbox}
+            />
+            <input
+              className="border-b border-transparent focus:border-gray-400 outline-none flex-1"
+              value={check.label}
+              onChange={(e) => handleLabelChange(e, check.id)}
+              onBlur={() => handleBlurLabel(check.id)}
+            />
 
-      {/* 🔹 체크박스 추가 */}
+            <button
+              onClick={() => deleteCheckbox(check.id)}
+              className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-black transition text-sm"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+      </div>
+
       <div className="no-drag flex items-center justify-center pt-2">
         <button
           onClick={addCheckbox}
@@ -158,7 +160,6 @@ export default function CheckboxWidget({
         </button>
       </div>
 
-      {/* 🔹 편집/삭제 버튼 */}
       {isEditMode ? (
         <button
           onClick={() => deleteWidget(id)}

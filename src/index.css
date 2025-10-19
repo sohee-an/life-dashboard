@@ -38,3 +38,11 @@ body {
   border: 2px dashed rgba(255, 0, 0, 0.3);
   transition: all 0.2s ease-in-out;
 }
+/* 기본적으로 스크롤바 숨김 */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
+}

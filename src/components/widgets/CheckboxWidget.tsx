@@ -22,34 +22,78 @@ export default function CheckboxWidget({
   const [menuOpen, setMenuOpen] = useState(false);
   const [localContent, setLocalContent] = useState({ title, checkboxes });
 
-  //   // 외부 변경 동기화
+  // 외부 변경 동기화
   useEffect(() => setLocalContent({ title, checkboxes }), [title, checkboxes]);
 
-  const handleBlur = () => {
-    updateWidgetProps(id, localContent);
-  };
-
+  /**  체크박스 상태 (자주 바뀜 → 디바운스 저장) */
   const handleCheckbox = (e: ChangeEvent<HTMLInputElement>) => {
     const targetId = e.target.name;
     const checked = e.target.checked;
 
-    // 체크박스 배열 업데이트
     const updatedCheckboxes = localContent.checkboxes.map((cb) =>
       cb.id === targetId ? { ...cb, checked } : cb
     );
 
-    // 로컬 상태 갱신
     const updated = { ...localContent, checkboxes: updatedCheckboxes };
-    setLocalContent((prev) => ({ ...prev, updated }));
+    setLocalContent(updated);
 
     updateWidgetProps(id, updated);
   };
 
+  /** 위젯 제목 (onBlur 시 저장 - 자주 바뀌지않을거 같아서) */
   const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     setLocalContent((prev) => ({
       ...prev,
       title: e.target.value,
     }));
+  };
+
+  const handleBlurTitle = () => {
+    updateWidgetProps(id, { title: localContent.title });
+  };
+
+  /**  개별 label 수정 (onBlur 시 저장-자주 바뀌지않을거 같아서) */
+  const handleLabelChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    targetId: string
+  ) => {
+    const newLabel = e.target.value;
+    setLocalContent((prev) => ({
+      ...prev,
+      checkboxes: prev.checkboxes.map((cb) =>
+        cb.id === targetId ? { ...cb, label: newLabel } : cb
+      ),
+    }));
+  };
+
+  const handleBlurLabel = (targetId: string) => {
+    const updated = localContent.checkboxes.find((cb) => cb.id === targetId);
+    if (updated) updateWidgetProps(id, { checkboxes: localContent.checkboxes });
+  };
+
+  /**  체크박스 추가 (즉시 저장) */
+  const addCheckbox = () => {
+    const newCheckbox = {
+      id: crypto.randomUUID(),
+      label: "새로운 할 일",
+      checked: false,
+    };
+    const updated = {
+      ...localContent,
+      checkboxes: [...localContent.checkboxes, newCheckbox],
+    };
+    setLocalContent(updated);
+    updateWidgetProps(id, updated);
+  };
+
+  /**  체크박스 삭제 (즉시 저장) */
+  const deleteCheckbox = (targetId: string) => {
+    const updated = {
+      ...localContent,
+      checkboxes: localContent.checkboxes.filter((cb) => cb.id !== targetId),
+    };
+    setLocalContent(updated);
+    updateWidgetProps(id, updated);
   };
 
   return (
@@ -65,32 +109,56 @@ export default function CheckboxWidget({
         setMenuOpen(false);
       }}
     >
+      {/* 🔹 위젯 타이틀 */}
       <input
-        onBlur={handleBlur}
+        onBlur={handleBlurTitle}
         value={localContent.title}
         onChange={handleChangeTitle}
+        className="font-semibold mb-1"
       />
-      {checkboxes.map((check) => {
-        return (
-          <div className="flex gap-2 no-drag items-center " id={check.id}>
-            <input
-              id={check.id}
-              className="w-4 h-4  cursor-pointer"
-              checked={check.checked}
-              type="checkbox"
-              name={check.id}
-              onChange={handleCheckbox}
-            />
-            <input value={check.label} />
-          </div>
-        );
-      })}
-      <div className=" no-drag flex items-center justify-center pt-2">
-        <button className="border-gray-400 border w-6 h-6 flex items-center justify-center ">
+
+      {/* 🔹 체크박스 목록 */}
+      {localContent.checkboxes.map((check) => (
+        <div
+          key={check.id}
+          className="flex gap-2 no-drag items-center group"
+          id={check.id}
+        >
+          <input
+            id={check.id}
+            className="w-4 h-4 cursor-pointer"
+            checked={check.checked}
+            type="checkbox"
+            name={check.id}
+            onChange={handleCheckbox}
+          />
+          <input
+            className="border-b border-transparent focus:border-gray-400 outline-none flex-1"
+            value={check.label}
+            onChange={(e) => handleLabelChange(e, check.id)}
+            onBlur={() => handleBlurLabel(check.id)}
+          />
+
+          <button
+            onClick={() => deleteCheckbox(check.id)}
+            className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-black transition text-sm"
+          >
+            ✕
+          </button>
+        </div>
+      ))}
+
+      {/* 🔹 체크박스 추가 */}
+      <div className="no-drag flex items-center justify-center pt-2">
+        <button
+          onClick={addCheckbox}
+          className="no-drag border-gray-400 border w-6 h-6 flex items-center justify-center rounded-md hover:bg-gray-100"
+        >
           +
         </button>
       </div>
 
+      {/* 🔹 편집/삭제 버튼 */}
       {isEditMode ? (
         <button
           onClick={() => deleteWidget(id)}
@@ -112,7 +180,7 @@ export default function CheckboxWidget({
         )
       )}
 
-      {/* 메뉴 */}
+      {/* 🔹 위젯 메뉴 */}
       {menuOpen && !isEditMode && (
         <div className="absolute right-2 top-8 bg-white border border-gray-200 shadow-md rounded-md text-sm z-10">
           <button

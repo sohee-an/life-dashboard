@@ -1,7 +1,7 @@
-import { useState, useEffect, type ChangeEvent } from 'react';
-import { useDashboardStore } from '../../../store/useDashboardStore';
-import { MoreVertical, X } from 'lucide-react';
-import clsx from 'clsx';
+import { useState, useEffect, type ChangeEvent } from "react";
+import { useDashboardStore } from "../../../store/useDashboardStore";
+import { MoreVertical, X } from "lucide-react";
+import clsx from "clsx";
 
 type CheckboxWidgetProps = {
   id: string;
@@ -75,7 +75,7 @@ export default function CheckboxWidget({
   const addCheckbox = () => {
     const newCheckbox = {
       id: crypto.randomUUID(),
-      label: '새로운 할 일',
+      label: "새로운 할 일",
       checked: false,
     };
     const updated = {
@@ -99,9 +99,9 @@ export default function CheckboxWidget({
   return (
     <div
       className={clsx(
-        'text-black p-4 relative flex flex-col w-full h-full rounded-lg shadow-sm transition-all duration-200',
-        isEditMode && 'animate-wiggle',
-        hover ? 'bg-red-300 cursor-grab' : 'bg-gray-50'
+        "text-black p-4 relative flex flex-col w-full h-full rounded-lg shadow-sm transition-all duration-200",
+        isEditMode && "animate-wiggle",
+        hover ? "bg-red-300 cursor-grab" : "bg-gray-50"
       )}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => {
@@ -117,7 +117,7 @@ export default function CheckboxWidget({
       />
       <div
         className={clsx(
-          'flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent scrollbar-hide group-hover:scrollbar-default'
+          "flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent scrollbar-hide group-hover:scrollbar-default"
         )}
       >
         {localContent.checkboxes.map((check) => (

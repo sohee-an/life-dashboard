@@ -1,5 +1,5 @@
-import { widgetRegistry } from './WidgetRegistry';
-import type { Widget } from './types';
+import { widgetRegistry } from "./WidgetRegistry";
+import type { Widget } from "./types";
 
 export function WidgetRenderer({ widget }: { widget: Widget }) {
   const WidgetComponent =

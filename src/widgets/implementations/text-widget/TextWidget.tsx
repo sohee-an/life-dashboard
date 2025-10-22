@@ -1,14 +1,10 @@
-import { useState, useEffect } from "react";
-import { useDashboardStore } from "../../store/useDashboardStore";
-import { MoreVertical, X } from "lucide-react";
-import clsx from "clsx";
-export default function TextWidget({
-  id,
-  content,
-}: {
-  id: string;
-  content: string;
-}) {
+import { useState, useEffect } from 'react';
+import { useDashboardStore } from '../../../store/useDashboardStore';
+import { MoreVertical, X } from 'lucide-react';
+
+import clsx from 'clsx';
+
+function TextWidget({ id, content }: { id: string; content: string }) {
   const updateWidgetProps = useDashboardStore((s) => s.updateWidgetProps);
   const deleteWidget = useDashboardStore((s) => s.deleteWidget);
   const isEditMode = useDashboardStore((s) => s.isEditMode);
@@ -31,9 +27,9 @@ export default function TextWidget({
   return (
     <div
       className={clsx(
-        "p-2 relative flex flex-col w-full h-full rounded-lg shadow-sm transition-all duration-200",
-        isEditMode && "animate-wiggle",
-        hover ? "bg-red-300 cursor-grab" : "bg-gray-50"
+        'p-2 relative flex flex-col w-full h-full rounded-lg shadow-sm transition-all duration-200',
+        isEditMode && 'animate-wiggle',
+        hover ? 'bg-red-300 cursor-grab' : 'bg-gray-50'
       )}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => {
@@ -85,3 +81,4 @@ export default function TextWidget({
     </div>
   );
 }
+export { TextWidget };

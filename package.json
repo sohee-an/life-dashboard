@@ -12,6 +12,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.75.0",
     "@tailwindcss/vite": "^4.1.14",
+    "add": "^2.0.6",
     "clsx": "^2.1.1",
     "lucide-react": "^0.545.0",
     "react": "^19.1.1",
@@ -19,7 +20,9 @@
     "react-draggable": "^4.5.0",
     "react-grid-layout": "^1.5.2",
     "react-resizable": "^3.0.5",
+    "react-router-dom": "^7.9.4",
     "tailwindcss": "^4.1.14",
+    "zod": "^4.1.12",
     "zustand": "^5.0.8"
   },
   "devDependencies": {

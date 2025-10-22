@@ -1,9 +1,9 @@
-import GridLayout from "react-grid-layout";
-import WidgetRenderer from "./widgets/WidgetRenderer";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
+import GridLayout from 'react-grid-layout';
+import { WidgetRenderer } from '../../../widgets/registry/WidgetRender';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 
-import { useWidgetLayoutSync } from "../hooks/useWidgetLayoutSync";
+import { useWidgetLayoutSync } from '../../../hooks/useWidgetLayoutSync';
 
 export default function Dashboard() {
   const { widgetArray, handleLayoutChange } = useWidgetLayoutSync();
@@ -24,10 +24,10 @@ export default function Dashboard() {
         <div
           key={widget.id}
           style={{
-            background: "#fff",
+            background: '#fff',
             borderRadius: 8,
-            boxShadow: "0 0 4px rgba(0,0,0,0.1)",
-            overflow: "hidden",
+            boxShadow: '0 0 4px rgba(0,0,0,0.1)',
+            overflow: 'hidden',
           }}
         >
           <WidgetRenderer widget={widget} />

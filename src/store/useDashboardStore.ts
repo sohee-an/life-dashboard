@@ -1,9 +1,21 @@
-import { create } from "zustand";
-import { storage } from "../lib/storageAdapter";
-import { supabase } from "../lib/supabase";
-import type { Widget, WidgetType } from "../types/widget";
-import { debouncedUpdate } from "../utiles/debouncedUpdate";
+import { create } from 'zustand';
+import { storage } from '../lib/storageAdapter';
+import { supabase } from '../lib/supabase';
+import type { Widget, WidgetType } from '../types/widget';
+import { debouncedUpdate } from '../utiles/debouncedUpdate';
+import { debounce } from '../utiles/debounce';
 
+const debouncedPersist = debounce(async (id: string, widget: Widget) => {
+  console.log('💾 Auto-saving widget:', id);
+  await storage.updateWidget(id, widget);
+}, 800);
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    console.log('⚡ Flushing pending saves before unload');
+    debouncedPersist.flush(); // 타이머 중이던 저장 강제 실행
+  });
+}
 interface DashboardState {
   widgets: Record<string, Widget>;
   selectedWidgetId: string | null;
@@ -11,16 +23,17 @@ interface DashboardState {
   error: string | null;
   user: any | null;
 
+  persistAll: any;
   initWidgets: () => Promise<void>;
   setWidgets: (widgets: Record<string, Widget>) => void;
   addWidget: (
-    widget: Omit<Widget, "id" | "created_at" | "updated_at">
+    widget: Omit<Widget, 'id' | 'created_at' | 'updated_at'>
   ) => Promise<string>;
   updateWidget: (id: string, updates: Partial<Widget>) => Promise<void>;
-  updateWidgetProps: (id: string, newProps: Partial<Widget["props"]>) => void;
+  updateWidgetProps: (id: string, newProps: Partial<Widget['props']>) => void;
   updateWidgetLayout: (
     id: string,
-    newLayout: Partial<Widget["layout"]>
+    newLayout: Partial<Widget['layout']>
   ) => void;
 
   deleteWidget: (id: string) => Promise<void>;
@@ -58,7 +71,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       set({ widgets, user, isLoading: false });
     } catch (e) {
       set({
-        error: e instanceof Error ? e.message : "Failed to load",
+        error: e instanceof Error ? e.message : 'Failed to load',
         isLoading: false,
       });
     }
@@ -78,7 +91,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       return newWidget.id;
     } catch (e) {
       set({
-        error: e instanceof Error ? e.message : "Failed to add",
+        error: e instanceof Error ? e.message : 'Failed to add',
         isLoading: false,
       });
       throw e;
@@ -111,22 +124,35 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
         widgets: { ...state.widgets, [id]: updated },
       }));
     } catch (e) {
-      console.error("Update failed:", e);
-      set({ error: e instanceof Error ? e.message : "Failed to update" });
+      console.error('Update failed:', e);
+      set({ error: e instanceof Error ? e.message : 'Failed to update' });
       throw e;
     }
   },
-  updateWidgetProps: (id: string, newProps: Partial<Widget["props"]>) => {
+  /** 1️⃣ 메모리 내 업데이트 (즉시 반영) */
+  updateWidgetProps: (id, newProps) => {
     const current = get().widgets[id];
     if (!current) return;
-
-    const updated = {
-      ...current,
-      props: { ...current.props, ...newProps },
-    };
+    const updated = { ...current, props: { ...current.props, ...newProps } };
     set((s) => ({ widgets: { ...s.widgets, [id]: updated } }));
-    debouncedUpdate(id, "props", newProps);
   },
+
+  /** 2️⃣ 로컬스토리지 저장 (idle or unload 시점에서만 호출) */
+  persistAll: () => {
+    localStorage.setItem('widgets', JSON.stringify(get().widgets));
+    console.log('💾 saved to localStorage');
+  },
+  // updateWidgetProps: (id: string, newProps: Partial<Widget['props']>) => {
+  //   const current = get().widgets[id];
+  //   if (!current) return;
+
+  //   const updated = {
+  //     ...current,
+  //     props: { ...current.props, ...newProps },
+  //   };
+  //   set((s) => ({ widgets: { ...s.widgets, [id]: updated } }));
+  //   debouncedUpdate(id, 'props', newProps);
+  // },
 
   updateWidgetLayout: (id, newLayout) => {
     const current = get().widgets[id];
@@ -138,7 +164,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     };
     set((s) => ({ widgets: { ...s.widgets, [id]: updated } }));
 
-    debouncedUpdate(id, "layout", newLayout);
+    debouncedUpdate(id, 'layout', newLayout);
   },
 
   // === 위젯 삭제 ===
@@ -159,7 +185,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       });
     } catch (e) {
       set({
-        error: e instanceof Error ? e.message : "Failed to delete",
+        error: e instanceof Error ? e.message : 'Failed to delete',
         isLoading: false,
       });
       throw e;
@@ -177,7 +203,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       });
     } catch (e) {
       set({
-        error: e instanceof Error ? e.message : "Failed to clear all",
+        error: e instanceof Error ? e.message : 'Failed to clear all',
         isLoading: false,
       });
       throw e;
@@ -203,10 +229,10 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       const widgets = await storage.getWidgets();
       set({ user: data.user, widgets, isLoading: false });
 
-      console.log("✅ Logged in successfully");
+      console.log('✅ Logged in successfully');
     } catch (e) {
       set({
-        error: e instanceof Error ? e.message : "Login failed",
+        error: e instanceof Error ? e.message : 'Login failed',
         isLoading: false,
       });
       throw e;
@@ -225,10 +251,10 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       const widgets = storage.getLocalCache();
       set({ user: null, widgets, isLoading: false });
 
-      console.log("✅ Logged out successfully");
+      console.log('✅ Logged out successfully');
     } catch (e) {
       set({
-        error: e instanceof Error ? e.message : "Logout failed",
+        error: e instanceof Error ? e.message : 'Logout failed',
         isLoading: false,
       });
       throw e;

@@ -1,8 +1,9 @@
-import Dashboard from "./components/Dashboard";
-import Layout from "../../components/layout";
-import { Settings } from "lucide-react";
-import { useDashboardStore } from "../../store/useDashboardStore";
-import { MENU_TAB } from "../../constants/menuTab";
+import Dashboard from './components/Dashboard';
+import Layout from '../../components/layout';
+import { Settings } from 'lucide-react';
+import { useDashboardStore } from '../../store/useDashboardStore';
+import { MENU_TAB } from '../../constants/menuTab';
+import { widgetDefaults } from '../../widgets/registry/WidgetDefaultRegistry';
 
 export default function DashboardPage() {
   const addWidget = useDashboardStore((s) => s.addWidget);
@@ -10,33 +11,22 @@ export default function DashboardPage() {
   const setEditMode = useDashboardStore((s) => s.setEditMode);
   const clearAllWidgets = useDashboardStore((s) => s.clearAllWidgets);
 
-  const handleAdd = (e: any) => {
+  const handleAdd = (e: React.MouseEvent<HTMLButtonElement>) => {
     const id = Date.now().toString();
-    const type = e.target.name;
+    const type = e.currentTarget.name as keyof typeof widgetDefaults;
 
-    if (type === "text") {
-      addWidget({
-        type,
-        layout: { i: id, x: 0, y: Infinity, w: 3, h: 2 },
-        props: { content: "새 메모" },
-      });
-    } else if (type === "checkbox") {
-      addWidget({
-        type: "checkbox",
-        layout: { i: id, x: 0, y: Infinity, w: 3, h: 2 },
-        props: {
-          title: "할 일",
-          checkboxes: [
-            { id: crypto.randomUUID(), label: "새로운 할 일", checked: false },
-            { id: crypto.randomUUID(), label: "새로운 할 일2", checked: true },
-          ],
-        },
-      });
-    }
+    const defaults = widgetDefaults[type];
+    if (!defaults) return;
+
+    addWidget({
+      type,
+      layout: { i: id, x: 0, y: Infinity, w: 3, h: 2 },
+      props: defaults,
+    });
   };
 
   const handleAllDelete = () => {
-    if (confirm("모든 위젯을 삭제하시겠습니까?")) clearAllWidgets();
+    if (confirm('모든 위젯을 삭제하시겠습니까?')) clearAllWidgets();
   };
 
   return (
@@ -58,12 +48,12 @@ export default function DashboardPage() {
             onClick={() => setEditMode(!isEditMode)}
             className={`px-4 py-2 rounded-md border transition-colors flex gap-2 items-center ${
               isEditMode
-                ? "bg-red-600 text-white border-red-600"
-                : "bg-gray-600 text-white border-gray-600 hover:bg-gray-700"
+                ? 'bg-red-600 text-white border-red-600'
+                : 'bg-gray-600 text-white border-gray-600 hover:bg-gray-700'
             }`}
           >
             <Settings className="w-5 h-5" />
-            <span>{isEditMode ? "편집 종료" : "편집 모드"}</span>
+            <span>{isEditMode ? '편집 종료' : '편집 모드'}</span>
           </button>
 
           {isEditMode && (

@@ -1,25 +1,23 @@
-import { useState, useEffect } from "react";
-import { useDashboardStore } from "../../../store/useDashboardStore";
-import { MoreVertical, X } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { useDashboardStore } from '../../../store/useDashboardStore';
 
-import clsx from "clsx";
-import { WidgetFrame } from "../../components/WidgetFrame";
+import { WidgetFrame } from '../../components/WidgetFrame';
 
 function TextWidget({ id, content }: { id: string; content: string }) {
   const updateWidgetProps = useDashboardStore((s) => s.updateWidgetProps);
-  const deleteWidget = useDashboardStore((s) => s.deleteWidget);
-  const isEditMode = useDashboardStore((s) => s.isEditMode);
+  // const deleteWidget = useDashboardStore((s) => s.deleteWidget);
+  // const isEditMode = useDashboardStore((s) => s.isEditMode);
 
-  const [hover, setHover] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  // const [hover, setHover] = useState(false);
+  // const [menuOpen, setMenuOpen] = useState(false);
   const [localContent, setLocalContent] = useState(content);
 
   // 외부 변경 동기화
   useEffect(() => setLocalContent(content), [content]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setLocalContent(e.target.value);
-  };
+  // const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  //   setLocalContent(e.target.value);
+  // };
 
   const handleBlur = () => {
     updateWidgetProps(id, { content: localContent });

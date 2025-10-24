@@ -1,4 +1,6 @@
-export type WidgetType = 'text' | 'checkbox';
+import type { TimerWidgetData } from '../implementations/timer-widget';
+
+export type WidgetType = 'text' | 'checkbox' | 'timer';
 
 export interface WidgetPropsMap {
   text: { content: string };
@@ -6,6 +8,7 @@ export interface WidgetPropsMap {
     title: string;
     checkboxes: { id: string; label: string; checked: boolean }[];
   };
+  timer: TimerWidgetData;
 }
 
 export interface WidgetBase<TType extends WidgetType = WidgetType> {

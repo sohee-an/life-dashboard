@@ -1,9 +1,8 @@
-import Dashboard from './components/Dashboard';
-import Layout from '../../components/layout';
 import { Settings } from 'lucide-react';
 import { useDashboardStore } from '../../store/useDashboardStore';
-import { MENU_TAB } from '../../constants/menuTab';
-import { widgetDefaults } from '../../widgets/registry/WidgetDefaultRegistry';
+import { widgetRegistry } from '../../widgets/registry/WidgetDefaultRegistry';
+import Layout from '../../components/layout';
+import Dashboard from './components/Dashboard';
 
 export default function DashboardPage() {
   const addWidget = useDashboardStore((s) => s.addWidget);
@@ -11,12 +10,9 @@ export default function DashboardPage() {
   const setEditMode = useDashboardStore((s) => s.setEditMode);
   const clearAllWidgets = useDashboardStore((s) => s.clearAllWidgets);
 
-  const handleAdd = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleAdd = (type: keyof typeof widgetRegistry) => {
     const id = Date.now().toString();
-    const type = e.currentTarget.name as keyof typeof widgetDefaults;
-
-    const defaults = widgetDefaults[type];
-    if (!defaults) return;
+    const { defaults } = widgetRegistry[type];
 
     addWidget({
       type,
@@ -25,25 +21,21 @@ export default function DashboardPage() {
     });
   };
 
-  const handleAllDelete = () => {
-    if (confirm('모든 위젯을 삭제하시겠습니까?')) clearAllWidgets();
-  };
-
   return (
     <Layout>
       <div className="p-5">
         <div className="flex gap-2 mb-4">
-          {MENU_TAB.map((menu) => (
+          {Object.entries(widgetRegistry).map(([type, { label }]) => (
             <button
-              key={menu.id}
-              name={menu.type}
-              onClick={handleAdd}
+              key={type}
+              onClick={() => handleAdd(type as keyof typeof widgetRegistry)}
               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
             >
-              + 새 {menu.value}
+              + 새 {label}
             </button>
           ))}
 
+          {/* 편집모드 버튼 */}
           <button
             onClick={() => setEditMode(!isEditMode)}
             className={`px-4 py-2 rounded-md border transition-colors flex gap-2 items-center ${
@@ -58,7 +50,7 @@ export default function DashboardPage() {
 
           {isEditMode && (
             <button
-              onClick={handleAllDelete}
+              onClick={clearAllWidgets}
               className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
             >
               전체 삭제

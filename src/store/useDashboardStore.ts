@@ -3,19 +3,7 @@ import { storage } from '../lib/storageAdapter';
 import { supabase } from '../lib/supabase';
 import type { Widget, WidgetType } from '../types/widget';
 import { debouncedUpdate } from '../utiles/debouncedUpdate';
-import { debounce } from '../utiles/debounce';
 
-// const debouncedPersist = debounce(async (id: string, widget: Widget) => {
-//   console.log('💾 Auto-saving widget:', id);
-//   await storage.updateWidget(id, widget);
-// }, 800);
-
-// if (typeof window !== 'undefined') {
-//   window.addEventListener('beforeunload', () => {
-//     console.log('⚡ Flushing pending saves before unload');
-//     debouncedPersist.flush(); // 타이머 중이던 저장 강제 실행
-//   });
-// }
 interface DashboardState {
   widgets: Record<string, Widget>;
   selectedWidgetId: string | null;
@@ -135,7 +123,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     const current = get().widgets[id];
     if (!current) return;
 
-    // 1️⃣ Zustand 메모리 즉시 업데이트
+    //  Zustand 메모리 즉시 업데이트
     const updated = {
       ...current,
       props: { ...current.props, ...newProps },

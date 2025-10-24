@@ -20,7 +20,6 @@ export function TextWidget({ id, content }: { id: string; content: string }) {
       timer = setTimeout(() => {
         if (ref.current) {
           commitWidgetProps(id, { content: ref.current.value });
-          console.log('hi');
         }
       }, 1000);
     };

@@ -1,7 +1,7 @@
-import { useState, useEffect, type ChangeEvent } from "react";
-import { useDashboardStore } from "../../../store/useDashboardStore";
-import { MoreVertical, X } from "lucide-react";
-import clsx from "clsx";
+import { useState, useEffect, type ChangeEvent } from 'react';
+import { useDashboardStore } from '../../../store/useDashboardStore';
+import { MoreVertical, X } from 'lucide-react';
+import clsx from 'clsx';
 
 type CheckboxWidgetProps = {
   id: string;
@@ -14,7 +14,7 @@ export default function CheckboxWidget({
   title,
   checkboxes,
 }: CheckboxWidgetProps) {
-  const updateWidgetProps = useDashboardStore((s) => s.updateWidgetProps);
+  const commitWidgetProps = useDashboardStore((s) => s.commitWidgetProps);
   const deleteWidget = useDashboardStore((s) => s.deleteWidget);
   const isEditMode = useDashboardStore((s) => s.isEditMode);
 
@@ -37,7 +37,7 @@ export default function CheckboxWidget({
     const updated = { ...localContent, checkboxes: updatedCheckboxes };
     setLocalContent(updated);
 
-    updateWidgetProps(id, updated);
+    commitWidgetProps(id, updated);
   };
 
   /** 위젯 제목 (onBlur 시 저장 - 자주 바뀌지않을거 같아서) */
@@ -49,7 +49,7 @@ export default function CheckboxWidget({
   };
 
   const handleBlurTitle = () => {
-    updateWidgetProps(id, { title: localContent.title });
+    commitWidgetProps(id, { title: localContent.title });
   };
 
   /**  개별 label 수정 (onBlur 시 저장-자주 바뀌지않을거 같아서) */
@@ -68,14 +68,14 @@ export default function CheckboxWidget({
 
   const handleBlurLabel = (targetId: string) => {
     const updated = localContent.checkboxes.find((cb) => cb.id === targetId);
-    if (updated) updateWidgetProps(id, { checkboxes: localContent.checkboxes });
+    if (updated) commitWidgetProps(id, { checkboxes: localContent.checkboxes });
   };
 
   /**  체크박스 추가 (즉시 저장) */
   const addCheckbox = () => {
     const newCheckbox = {
       id: crypto.randomUUID(),
-      label: "새로운 할 일",
+      label: '새로운 할 일',
       checked: false,
     };
     const updated = {
@@ -83,7 +83,7 @@ export default function CheckboxWidget({
       checkboxes: [...localContent.checkboxes, newCheckbox],
     };
     setLocalContent(updated);
-    updateWidgetProps(id, updated);
+    commitWidgetProps(id, updated);
   };
 
   /**  체크박스 삭제 (즉시 저장) */
@@ -93,15 +93,15 @@ export default function CheckboxWidget({
       checkboxes: localContent.checkboxes.filter((cb) => cb.id !== targetId),
     };
     setLocalContent(updated);
-    updateWidgetProps(id, updated);
+    commitWidgetProps(id, updated);
   };
 
   return (
     <div
       className={clsx(
-        "text-black p-4 relative flex flex-col w-full h-full rounded-lg shadow-sm transition-all duration-200",
-        isEditMode && "animate-wiggle",
-        hover ? "bg-red-300 cursor-grab" : "bg-gray-50"
+        'text-black p-4 relative flex flex-col w-full h-full rounded-lg shadow-sm transition-all duration-200',
+        isEditMode && 'animate-wiggle',
+        hover ? 'bg-red-300 cursor-grab' : 'bg-gray-50'
       )}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => {
@@ -117,7 +117,7 @@ export default function CheckboxWidget({
       />
       <div
         className={clsx(
-          "flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent scrollbar-hide group-hover:scrollbar-default"
+          'flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent scrollbar-hide group-hover:scrollbar-default'
         )}
       >
         {localContent.checkboxes.map((check) => (

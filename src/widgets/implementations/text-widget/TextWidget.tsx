@@ -3,7 +3,7 @@ import { useDashboardStore } from '../../../store/useDashboardStore';
 import { WidgetFrame } from '../../components/WidgetFrame';
 
 export function TextWidget({ id, content }: { id: string; content: string }) {
-  const updateWidgetProps = useDashboardStore((s) => s.updateWidgetProps);
+  const commitWidgetProps = useDashboardStore((s) => s.commitWidgetProps);
   const ref = useRef<HTMLTextAreaElement>(null);
 
   // 초기값 반영
@@ -19,7 +19,8 @@ export function TextWidget({ id, content }: { id: string; content: string }) {
       clearTimeout(timer);
       timer = setTimeout(() => {
         if (ref.current) {
-          updateWidgetProps(id, { content: ref.current.value });
+          commitWidgetProps(id, { content: ref.current.value });
+          console.log('hi');
         }
       }, 1000);
     };

@@ -5,17 +5,17 @@ import type { Widget, WidgetType } from '../types/widget';
 import { debouncedUpdate } from '../utiles/debouncedUpdate';
 import { debounce } from '../utiles/debounce';
 
-const debouncedPersist = debounce(async (id: string, widget: Widget) => {
-  console.log('💾 Auto-saving widget:', id);
-  await storage.updateWidget(id, widget);
-}, 800);
+// const debouncedPersist = debounce(async (id: string, widget: Widget) => {
+//   console.log('💾 Auto-saving widget:', id);
+//   await storage.updateWidget(id, widget);
+// }, 800);
 
-if (typeof window !== 'undefined') {
-  window.addEventListener('beforeunload', () => {
-    console.log('⚡ Flushing pending saves before unload');
-    debouncedPersist.flush(); // 타이머 중이던 저장 강제 실행
-  });
-}
+// if (typeof window !== 'undefined') {
+//   window.addEventListener('beforeunload', () => {
+//     console.log('⚡ Flushing pending saves before unload');
+//     debouncedPersist.flush(); // 타이머 중이던 저장 강제 실행
+//   });
+// }
 interface DashboardState {
   widgets: Record<string, Widget>;
   selectedWidgetId: string | null;
@@ -30,7 +30,7 @@ interface DashboardState {
     widget: Omit<Widget, 'id' | 'created_at' | 'updated_at'>
   ) => Promise<string>;
   updateWidget: (id: string, updates: Partial<Widget>) => Promise<void>;
-  updateWidgetProps: (id: string, newProps: Partial<Widget['props']>) => void;
+  commitWidgetProps: (id: string, newProps: Partial<Widget['props']>) => void;
   updateWidgetLayout: (
     id: string,
     newLayout: Partial<Widget['layout']>
@@ -129,15 +129,27 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       throw e;
     }
   },
-  /** 1️⃣ 메모리 내 업데이트 (즉시 반영) */
-  updateWidgetProps: (id, newProps) => {
+
+  //로컬스토리지에 저장하는 로직
+  commitWidgetProps: (id, newProps) => {
     const current = get().widgets[id];
     if (!current) return;
-    const updated = { ...current, props: { ...current.props, ...newProps } };
-    set((s) => ({ widgets: { ...s.widgets, [id]: updated } }));
+
+    // 1️⃣ Zustand 메모리 즉시 업데이트
+    const updated = {
+      ...current,
+      props: { ...current.props, ...newProps },
+      updated_at: new Date().toISOString(),
+    };
+    set((s) => ({
+      widgets: { ...s.widgets, [id]: updated },
+    }));
+
+    // 2️⃣ 로컬스토리지에 즉시 반영
+    void storage.updateWidget(id, updated);
   },
 
-  /** 2️⃣ 로컬스토리지 저장 (idle or unload 시점에서만 호출) */
+  /** 2️ 로컬스토리지 저장 (idle or unload 시점에서만 호출) */
   persistAll: () => {
     localStorage.setItem('widgets', JSON.stringify(get().widgets));
     console.log('💾 saved to localStorage');
